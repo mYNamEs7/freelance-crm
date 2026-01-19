@@ -1,0 +1,35 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from database import create_db
+from routers.user_router import router as user_router
+from routers.auth_router import router as auth_router
+from routers.clients_router import router as clients_router
+from routers.orders_router import router as orders_router
+from routers.payments_router import router as payments_router
+
+
+app = FastAPI(title="Freelance CRM")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",     # Vite
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST, PUT, DELETE и т.д.
+    allow_headers=["*"],  # Authorization, Content-Type и т.д.
+)
+
+create_db()
+
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
+
+
+app.include_router(user_router)
+app.include_router(auth_router)
+app.include_router(clients_router)
+app.include_router(orders_router)
+app.include_router(payments_router)
