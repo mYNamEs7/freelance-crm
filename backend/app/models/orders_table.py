@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, Enum as SqlEnum, ForeignKey
-from backend.app.database import Base
+from app.database import Base
 from schemas.order_scheme import OrderStatus
 
 

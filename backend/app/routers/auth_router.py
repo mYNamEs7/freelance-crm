@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from backend.app.database import get_db
+from app.database import get_db
 from models.user_table import User
 from security.hash_password import verify_pwd
 from security.jwt import create_access_token, get_current_user_test
-from backend.app.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from schemas.auth_scheme import LoginOutputData, LoginInputData
 from schemas.user_scheme import UserOutputData
 

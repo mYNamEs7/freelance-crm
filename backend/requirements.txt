@@ -3,3 +3,5 @@ fastapi
 asyncpg
 python-dotenv
 uvicorn
+python-jose
+passlib

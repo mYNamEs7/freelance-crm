@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.app.database import create_db
+from app.database import create_db
 from routers.user_router import router as user_router
 from routers.auth_router import router as auth_router
 from routers.clients_router import router as clients_router

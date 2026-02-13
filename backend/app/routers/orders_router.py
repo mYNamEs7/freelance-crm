@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from backend.app.database import get_db
+from app.database import get_db
 from schemas.order_scheme import OrderInputData, OrderOutputData
 from typing import List
 from models.orders_table import Order
