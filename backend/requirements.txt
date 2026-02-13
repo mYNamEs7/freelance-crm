@@ -4,7 +4,6 @@ asyncpg
 python-dotenv
 uvicorn
 python-jose
-passlib
+passlib[bcrypt]
 pydantic[email]
 pydantic
-bcrypt
