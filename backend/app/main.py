@@ -11,10 +11,7 @@ from routers.payments_router import router as payments_router
 app = FastAPI(title="Freelance CRM")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",     # Vite
-        "http://127.0.0.1:5173",
-    ],
+    allow_origins=["https://freelance-di5j6jk9b-mynames7s-projects.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],  # GET, POST, PUT, DELETE и т.д.
     allow_headers=["*"],  # Authorization, Content-Type и т.д.
