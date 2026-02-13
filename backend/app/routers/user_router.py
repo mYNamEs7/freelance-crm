@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from database import get_db
+from backend.app.database import get_db
 from security.hash_password import hash_pwd
 from models.user_table import User
 from schemas.user_scheme import UserInputData, UserOutputData

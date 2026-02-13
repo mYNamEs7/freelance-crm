@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database import get_db
+from backend.app.database import get_db
 from schemas.payment_scheme import PaymentInputData, PaymentOutputData
 from typing import List
 from models.payments_table import Payment
