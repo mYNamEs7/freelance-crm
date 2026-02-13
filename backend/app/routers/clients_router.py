@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from models.client_table import Client
-from models.orders_table import Order
-from schemas.client_scheme import ClientInputData, ClientOutputData
+from app.models.client_table import Client
+from app.models.orders_table import Order
+from app.schemas.client_scheme import ClientInputData, ClientOutputData
 from typing import List
-from models.user_table import User
-from security.jwt import get_current_user_test
+from app.models.user_table import User
+from app.security.jwt import get_current_user_test
 
 router = APIRouter(prefix="/clients", tags=["Clients"])
 

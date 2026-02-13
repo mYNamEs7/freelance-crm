@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from schemas.payment_scheme import PaymentInputData, PaymentOutputData
+from app.schemas.payment_scheme import PaymentInputData, PaymentOutputData
 from typing import List
-from models.payments_table import Payment
-from models.user_table import User
-from security.jwt import get_current_user_test
+from app.models.payments_table import Payment
+from app.models.user_table import User
+from app.security.jwt import get_current_user_test
 
 router = APIRouter(prefix="/payments", tags=["Payments"])
 

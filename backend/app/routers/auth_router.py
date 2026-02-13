@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from app.database import get_db
-from models.user_table import User
-from security.hash_password import verify_pwd
-from security.jwt import create_access_token, get_current_user_test
+from app.models.user_table import User
+from app.security.hash_password import verify_pwd
+from app.security.jwt import create_access_token, get_current_user_test
 from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
-from schemas.auth_scheme import LoginOutputData, LoginInputData
-from schemas.user_scheme import UserOutputData
+from app.schemas.auth_scheme import LoginOutputData, LoginInputData
+from app.schemas.user_scheme import UserOutputData
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 

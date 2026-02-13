@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Enum as SqlEnum, ForeignKey
 from app.database import Base
-from schemas.order_scheme import OrderStatus
+from app.schemas.order_scheme import OrderStatus
 
 
 class Order(Base):

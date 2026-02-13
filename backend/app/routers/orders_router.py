@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from schemas.order_scheme import OrderInputData, OrderOutputData
+from app.schemas.order_scheme import OrderInputData, OrderOutputData
 from typing import List
-from models.orders_table import Order
-from models.user_table import User
-from security.jwt import get_current_user_test
+from app.models.orders_table import Order
+from app.models.user_table import User
+from app.security.jwt import get_current_user_test
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 

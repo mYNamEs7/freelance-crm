@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.config import SECRET_KEY, ALGORITHM
 from app.database import get_db
-from models.user_table import User
+from app.models.user_table import User
 
 
 def create_access_token(data: dict, expires_delta: timedelta) -> str:
