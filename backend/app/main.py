@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_db
-from routers.user_router import router as user_router
-from routers.auth_router import router as auth_router
-from routers.clients_router import router as clients_router
-from routers.orders_router import router as orders_router
-from routers.payments_router import router as payments_router
+from app.routers.user_router import router as user_router
+from app.routers.auth_router import router as auth_router
+from app.routers.clients_router import router as clients_router
+from app.routers.orders_router import router as orders_router
+from app.routers.payments_router import router as payments_router
 
 
 app = FastAPI(title="Freelance CRM")
