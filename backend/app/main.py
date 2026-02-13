@@ -17,9 +17,6 @@ app.add_middleware(
     allow_headers=["*"],  # Authorization, Content-Type и т.д.
 )
 
-create_db()
-
-
 @app.get("/health")
 def health_check():
     return {"status": "ok"}

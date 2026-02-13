@@ -4,15 +4,5 @@ from app.config import DATABASE_URL
 
 
 engine = create_async_engine(DATABASE_URL, echo=False)
-Session = async_sessionmaker(bind=engine, autoflush=False, autocommit=False)
+AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 Base = declarative_base()
-
-def create_db():
-    Base.metadata.create_all(engine)
-
-def get_db():
-    db = Session()
-    try:
-        yield db
-    finally:
-        db.close()

@@ -2,10 +2,10 @@ from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.config import SECRET_KEY, ALGORITHM
-from app.database import get_db
+from app.database import AsyncSessionLocal
 from app.models.user_table import User
 
 
@@ -21,7 +21,7 @@ def create_access_token(data: dict, expires_delta: timedelta) -> str:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-def get_current_user_release(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+async def get_current_user_release(token: str = Depends(oauth2_scheme)) -> User:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
@@ -35,18 +35,13 @@ def get_current_user_release(token: str = Depends(oauth2_scheme), db: Session = 
             detail="Invalid token"
         )
 
-    user = db.query(User).get(int(user_id))
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(
+            select(User).where(User.id == int(user_id))
+        )
+        user = result.scalar_one_or_none()
 
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
 
-    return user
-
-
-def get_current_user_test(db: Session = Depends(get_db)) -> User:
-    user = db.query(User).get(1)
-
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    return user
+        return user
