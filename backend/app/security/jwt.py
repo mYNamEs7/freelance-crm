@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy import select
@@ -21,8 +21,11 @@ def create_access_token(data: dict, expires_delta: timedelta) -> str:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-async def get_current_user_release(token: str = Depends(oauth2_scheme)) -> User:
+async def get_current_user_release(access_token: str = Cookie(None)) -> User:
     try:
+        if not access_token:
+            raise HTTPException(401, "Not logged in")
+        token = access_token.removeprefix("Bearer ")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
         user_id: str | None = payload.get("sub")

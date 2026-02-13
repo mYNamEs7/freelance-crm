@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy import select
 from datetime import timedelta
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 @router.post("/login", response_model=LoginOutputData)
-async def login(data: LoginInputData):
+async def login(data: LoginInputData, response: Response):
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(User).where(User.email == data.email)
@@ -31,6 +31,7 @@ async def login(data: LoginInputData):
             data={"sub": str(user.id)},
             expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         )
+        response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
 
         return {
             "access_token": access_token,
