@@ -4,6 +4,8 @@ import { api } from "../api/http";
 import { setClientId } from "../api/orders";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
+import Loader from "../components/Loader";
+import BackButton from "../components/BackButton";
 
 type Client = {
   id: number;
@@ -17,6 +19,7 @@ export default function Clients() {
   const [contact, setContact] = useState("");
   const [notes, setNotes] = useState("");
   const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
 
@@ -30,7 +33,11 @@ export default function Clients() {
   }
 
   function GetClients() {
-    api.get("/clients/all").then((res) => setClients(res.data));
+    setLoading(true);
+    api.get("/clients/all").then((res) => {
+      setClients(res.data);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }
 
   async function OnAddClient(e: React.FormEvent) {
@@ -84,9 +91,14 @@ export default function Clients() {
     GetClients();
   }, []);
 
+  if (loading && clients.length === 0) {
+    return <Loader />;
+  }
+
   return (
     <div className="page">
       <div className="content">
+        <BackButton />
         <h2 className="title">Клиенты</h2>
         <div className="cards-wrapper">
           <div className="cards">

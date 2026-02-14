@@ -3,6 +3,8 @@ import { api } from "../api/http";
 import { addOrder } from "../api/orders";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pencil, Trash2, Plus, X } from "lucide-react";
+import Loader from "../components/Loader";
+import BackButton from "../components/BackButton";
 
 /* ================== TYPES ================== */
 
@@ -42,6 +44,7 @@ export default function Orders() {
   /* ===== DATA ===== */
   const [client, setClient] = useState<Client | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
   /* ===== ADD / EDIT ===== */
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -56,12 +59,18 @@ export default function Orders() {
 
   /* ================== API ================== */
 
-  const getClient = () => {
-    api.get(`/clients/get/${client_id}`).then((r) => setClient(r.data));
-  };
-
-  const getOrders = () => {
-    api.get(`/orders/all/${client_id}`).then((r) => setOrders(r.data));
+  const fetchData = () => {
+    setLoading(true);
+    Promise.all([
+      api.get(`/clients/get/${client_id}`).then((r) => r.data),
+      api.get(`/orders/all/${client_id}`).then((r) => r.data),
+    ])
+      .then(([clientData, ordersData]) => {
+        setClient(clientData);
+        setOrders(ordersData);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   };
 
   /* ================== HANDLERS ================== */
@@ -88,7 +97,7 @@ export default function Orders() {
       isPaid
     );
 
-    getOrders();
+    api.get(`/orders/all/${client_id}`).then((r) => setOrders(r.data));
     resetForm();
     setIsModalOpen(false);
   }
@@ -97,7 +106,7 @@ export default function Orders() {
     if (!editOrder) return;
 
     await api.put(`/orders/update/${editOrder.id}`, editOrder);
-    getOrders();
+    api.get(`/orders/all/${client_id}`).then((r) => setOrders(r.data));
     setEditOrder(null);
   }
 
@@ -105,20 +114,24 @@ export default function Orders() {
     if (!confirm("Удалить заказ?")) return;
 
     await api.delete(`/orders/delete/${id}`);
-    getOrders();
+    api.get(`/orders/all/${client_id}`).then((r) => setOrders(r.data));
   }
 
   /* ================== EFFECT ================== */
 
   useEffect(() => {
-    getClient();
-    getOrders();
+    fetchData();
   }, [client_id]);
 
   /* ================== RENDER ================== */
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <div className="page">
+      <BackButton />
       <h2 className="title">Заказы</h2>
 
       {client && (

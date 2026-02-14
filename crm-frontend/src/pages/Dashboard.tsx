@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/http";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 type User = {
   id: number;
@@ -34,7 +35,7 @@ export default function Dashboard() {
   };
   
   if (!user) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (

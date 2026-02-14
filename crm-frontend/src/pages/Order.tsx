@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/http";
 import { useParams } from "react-router-dom";
+import Loader from "../components/Loader";
+import BackButton from "../components/BackButton";
 
 export const OrderStatus = {
   NEW: "new",
@@ -26,28 +28,44 @@ type Order = {
 
 export default function OrderPage()
 {
-  const [order, setOrder] = useState<Order>();
+  const [order, setOrder] = useState<Order | null | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
   const { order_id } = useParams<{ order_id: string }>();
 
-  if (!order_id)
-  {
+  if (!order_id) {
     return <div>Order not found</div>;
   }
 
-  function GetOrder()
-  {
-    api.get("/orders/get/" + Number(order_id)).then((res) => setOrder(res.data));
+  function GetOrder() {
+    setLoading(true);
+    api.get("/orders/get/" + Number(order_id))
+      .then((res) => setOrder(res.data))
+      .catch(() => setOrder(null))
+      .finally(() => setLoading(false));
   }
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     if (!order_id) return;
     GetOrder();
   }, [order_id]);
 
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!order) {
+    return (
+      <div className="order-container">
+        <BackButton />
+        <p>Заказ не найден</p>
+      </div>
+    );
+  }
+
   return (
     <div className="order-container">
+      <BackButton />
       {order && (
         <div className="order-card">
           <h3 className="order-title">Заказ</h3>
@@ -73,8 +91,10 @@ export default function OrderPage()
       <style>{`
         .order-container {
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
           margin-top: 20px;
+          padding: 20px;
         }
 
         .order-card {
