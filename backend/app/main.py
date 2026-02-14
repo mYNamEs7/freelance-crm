@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_db
+from app.config import CORS_ORIGINS
 from app.routers.user_router import router as user_router
 from app.routers.auth_router import router as auth_router
 from app.routers.clients_router import router as clients_router
@@ -19,10 +20,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Freelance CRM", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://freelance-di5j6jk9b-mynames7s-projects.vercel.app"],
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],  # GET, POST, PUT, DELETE и т.д.
-    allow_headers=["*"],  # Authorization, Content-Type и т.д.
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

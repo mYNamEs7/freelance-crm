@@ -6,12 +6,32 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
-    navigate("/");
+    setError("");
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (err: unknown) {
+      let msg = "Неверный email или пароль";
+      if (err && typeof err === "object" && "response" in err) {
+        const res = (err as { response?: { data?: { detail?: string }; status?: number } }).response;
+        msg = res?.data?.detail || (res?.status === 401 ? "Неверный email или пароль" : msg);
+      } else if (err && typeof err === "object" && "message" in err) {
+        const m = (err as { message?: string }).message;
+        if (m?.includes("Network") || m?.includes("CORS")) {
+          msg = "Нет связи с сервером. Проверьте VITE_API_URL и CORS_ORIGINS.";
+        }
+      }
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,8 +55,9 @@ export default function Login() {
         className="form-input"
       />
 
-      <button type="submit" className="form-button">
-        Login
+      {error && <div className="form-error">{error}</div>}
+      <button type="submit" className="form-button" disabled={loading}>
+        {loading ? "Вход..." : "Войти"}
       </button>
       </form>
       <style>{`
@@ -100,6 +121,18 @@ export default function Login() {
 
         .form-button:active {
           transform: translateY(0);
+        }
+
+        .form-button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .form-error {
+          color: #dc2626;
+          font-size: 14px;
+          text-align: center;
+          margin-top: -8px;
         }
 
         @media (prefers-color-scheme: dark) {

@@ -16,3 +16,10 @@ DATABASE_URL = DATABASE_URL.replace(
     "postgresql://",
     "postgresql+asyncpg://"
 )
+
+# CORS — список допустимых origins через запятую (URL фронта на Vercel)
+_CORS_ORIGINS = os.getenv("CORS_ORIGINS", "")
+CORS_ORIGINS = [o.strip() for o in _CORS_ORIGINS.split(",") if o.strip()] or [
+    "http://localhost:5173",
+    "https://freelance-di5j6jk9b-mynames7s-projects.vercel.app",
+]
