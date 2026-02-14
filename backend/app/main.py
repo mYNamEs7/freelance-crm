@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_db
@@ -8,7 +10,13 @@ from app.routers.orders_router import router as orders_router
 from app.routers.payments_router import router as payments_router
 
 
-app = FastAPI(title="Freelance CRM")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_db()
+    yield
+
+
+app = FastAPI(title="Freelance CRM", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://freelance-di5j6jk9b-mynames7s-projects.vercel.app"],
@@ -17,7 +25,6 @@ app.add_middleware(
     allow_headers=["*"],  # Authorization, Content-Type и т.д.
 )
 
-create_db()
 
 @app.get("/health")
 def health_check():
