@@ -1,5 +1,3 @@
-// ../pages/Orders.tsx
-
 import { useEffect, useState } from "react";
 import { api } from "../api/http";
 import { useParams } from "react-router-dom";
@@ -12,7 +10,8 @@ export const OrderStatus = {
   ARCHIVED: "archived",
 } as const;
 
-export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
+export type OrderStatusType =
+  (typeof OrderStatus)[keyof typeof OrderStatus];
 
 type Order = {
   id: number;
@@ -21,147 +20,97 @@ type Order = {
   title: string;
   description: string;
   price: number;
-  status: OrderStatus
+  status: OrderStatusType;
   notes: string;
   is_paid: boolean;
-}
+};
 
-export default function OrderPage()
-{
+export default function OrderPage() {
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-
   const { order_id } = useParams<{ order_id: string }>();
 
   if (!order_id) {
-    return <div>Order not found</div>;
+    return (
+      <div className="p-8">
+        <p>Order not found</p>
+      </div>
+    );
   }
 
   function GetOrder() {
     setLoading(true);
-    api.get("/orders/get/" + Number(order_id))
+    api
+      .get("/orders/get/" + Number(order_id))
       .then((res) => setOrder(res.data))
       .catch(() => setOrder(null))
       .finally(() => setLoading(false));
   }
 
   useEffect(() => {
-    if (!order_id) return;
     GetOrder();
   }, [order_id]);
 
   if (loading) {
-    return <Loader />;
-  }
-
-  if (!order) {
     return (
-      <div className="order-container">
-        <BackButton />
-        <p>Заказ не найден</p>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader />
       </div>
     );
   }
 
+  if (!order) {
+    return (
+      <div className="p-8 max-w-2xl mx-auto">
+        <BackButton />
+        <p className="text-slate-500 dark:text-slate-400">Заказ не найден</p>
+      </div>
+    );
+  }
+
+  const statusStyles = {
+    new: "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200",
+    active:
+      "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200",
+    archived:
+      "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300",
+  };
+
   return (
-    <div className="order-container">
-      <BackButton />
-      {order && (
-        <div className="order-card">
-          <h3 className="order-title">Заказ</h3>
-          <div className="order-field">
-            <h4>{order.title}</h4>
+    <div className="p-8 max-w-2xl mx-auto flex flex-col items-center">
+      <div className="w-full max-w-md">
+        <BackButton />
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg overflow-hidden">
+          <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-600">
+            <h1 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 text-center">
+              Заказ
+            </h1>
           </div>
-          <div className="order-field">
-            <p className="muted">{order.description}</p>
-          </div>
-          <div className="order-field">
-            💰 {order.price} ₽
-          </div>
-          <div className="order-field">
-            <span className={`status-badge status-${order.status.toLowerCase()}`}>
+          <div className="p-6 space-y-4">
+            <div>
+              <h2 className="font-semibold text-slate-800 dark:text-slate-100 text-lg">
+                {order.title}
+              </h2>
+            </div>
+            {order.description && (
+              <p className="text-slate-600 dark:text-slate-300 text-sm">
+                {order.description}
+              </p>
+            )}
+            <p className="text-slate-800 dark:text-slate-100 font-semibold">
+              💰 {order.price} ₽
+            </p>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${statusStyles[order.status as keyof typeof statusStyles] || statusStyles.archived}`}
+            >
               📌 {order.status}
             </span>
-          </div>
-          <div className="order-field">
-            {order.is_paid ? "✅ Оплачено" : "❌ Не оплачено"}
+            <p className="text-sm">
+              {order.is_paid ? "✅ Оплачено" : "❌ Не оплачено"}
+            </p>
           </div>
         </div>
-      )}
-      <style>{`
-        .order-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin-top: 20px;
-          padding: 20px;
-        }
-
-        .order-card {
-          background: var(--bg); /* светлый фон */
-          padding: 20px 30px;
-          border-radius: 12px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-          max-width: 400px;
-          width: 100%;
-          font-family: Arial, sans-serif;
-        }
-
-        .order-title {
-          margin-bottom: 16px;
-          font-size: 20px;
-          color: #4f46e5;
-          text-align: center;
-        }
-
-        .order-field {
-          margin-bottom: 10px;
-          font-size: 16px;
-        }
-
-        .field-label {
-          font-weight: 600;
-          margin-right: 6px;
-        }
-
-        .status-badge {
-          padding: 2px 8px;
-          border-radius: 6px;
-          color: white;
-          font-weight: 500;
-          text-transform: capitalize;
-        }
-
-        .status-new {
-          background-color: #var(--bg);
-        }
-
-        .status-active {
-          background-color: #var(--bg);
-        }
-
-        .status-archived {
-          background-color: var(--bg);
-        }
-
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --bg: #1e1e1e;
-            --border: #333;
-            --text: #fff;
-            --input: #2a2a2a;
-          }
-        }
-
-        @media (prefers-color-scheme: light) {
-          :root {
-            --bg: #fff;
-            --border: #ccc;
-            --text: #000;
-            --input: #f9f9f9;
-          }
-        }
-      `}</style>
+      </div>
     </div>
   );
 }

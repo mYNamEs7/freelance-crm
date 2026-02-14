@@ -88,274 +88,127 @@ export default function Clients() {
   }
 
   if (loading && clients.length === 0) {
-    return <Loader />;
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
-    <div className="page">
-      <div className="content">
-        <BackButton />
-        <h2 className="title">Клиенты</h2>
-        <div className="cards-wrapper">
-          <div className="cards">
-            {clients.map((client) => (
-              <div key={client.id} className="card">
-                <div
-                  className="card-content"
-                  onClick={() => OpenClient(client.id)}
-                >
-                  <p>
-                    <h4>{client.name}</h4> 
-                  </p>
-                  <p>
-                    <p>📞 {client.contact}</p>
-                  </p>
-                  <p>
-                    <p className="muted">{" "}
-                    {client.notes.length > 50
-                      ? client.notes.slice(0, 50) + "..."
-                      : client.notes}</p>
-                  </p>
-                </div>
+    <div className="p-8 max-w-6xl mx-auto">
+      <BackButton />
+      <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+        Клиенты
+      </h2>
 
-                <div className="card-actions">
-                  <button onClick={() => OpenEditModal(client)}>
-                    <Pencil size={16} />
-                  </button>
-                  <button onClick={() => OnDeleteClient(client.id)}>
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="add-btn-wrapper">
-            <button className="add-btn" onClick={OpenAddModal}>
-              <Plus size={16} /> Добавить клиента
+      <div className="flex flex-wrap gap-6 justify-center">
+        {clients.map((client) => (
+          <div
+            key={client.id}
+            className="w-72 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
+          >
+            <button
+              type="button"
+              onClick={() => OpenClient(client.id)}
+              className="flex-1 p-5 text-left hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors"
+            >
+              <h3 className="font-semibold text-slate-800 dark:text-slate-100 truncate">
+                {client.name}
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-1.5">
+                <span>📞</span> {client.contact}
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-300 mt-2 line-clamp-2">
+                {client.notes || "—"}
+              </p>
             </button>
+            <div className="p-2 flex gap-2 border-t border-slate-100 dark:border-slate-700">
+              <button
+                type="button"
+                onClick={() => OpenEditModal(client)}
+                className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                aria-label="Редактировать"
+              >
+                <Pencil size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => OnDeleteClient(client.id)}
+                className="p-2 rounded-lg text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                aria-label="Удалить"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
           </div>
-        </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center mt-8">
+        <button
+          type="button"
+          onClick={OpenAddModal}
+          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors"
+        >
+          <Plus size={20} />
+          Добавить клиента
+        </button>
       </div>
 
       {isModalOpen && (
         <div
-          className="modal-backdrop"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
           onClick={() => setIsModalOpen(false)}
         >
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md relative p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
-              className="close-btn"
+              type="button"
               onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-600 dark:hover:text-slate-300"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
-
-            <h3>
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
               {editClient ? "Редактировать клиента" : "Добавить клиента"}
             </h3>
-
             <form
               onSubmit={editClient ? OnUpdateClient : OnAddClient}
-              className="modal-form"
+              className="space-y-4"
             >
               <input
-                placeholder="Name"
+                placeholder="Имя"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <input
-                placeholder="Contact"
+                placeholder="Контакт"
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <textarea
-                placeholder="Notes"
+                placeholder="Заметки"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
               />
-              <button type="submit" className="submit-btn">
+              <button
+                type="submit"
+                className="w-full py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800"
+              >
                 {editClient ? "Сохранить" : "Добавить"}
               </button>
             </form>
           </div>
         </div>
       )}
-
-      <style>{`
-        .page {
-          width: 100%;
-          min-height: 100vh;
-
-          display: flex;
-          flex-direction: column;
-          align-items: center;      /* ⬅️ центр по горизонтали */
-          justify-content: flex-start;
-
-          font-family: 'Segoe UI', sans-serif;
-        }
-
-        .content {
-          width: 100%;
-          max-width: 1400px;
-          padding: 0 16px;
-        }
-
-        .title {
-          text-align: center;
-          font-size: 36px;
-          margin-bottom: 24px;
-        }
-
-        .cards-wrapper {
-          width: 100%;
-        }
-
-        .cards {
-          width: 100%;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: center; /* карточки по центру */
-          gap: 24px;
-          min-height: 1px;         /* 🔥 фикс прыжков */
-        }
-
-        .card {
-          width: 280px;
-          background: var(--card-bg);
-          color: var(--text-color);
-          padding: 20px;
-          border-radius: 12px;
-          border: 1px solid var(--border-color);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-        }
-
-        .card-content p {
-          margin: 6px 0;
-          word-break: break-word;
-          cursor: pointer;
-        }
-
-        .card-actions {
-          margin-top: 12px;
-          display: flex;
-          gap: 8px;
-        }
-
-        .card-actions button {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          padding: 6px;
-          border-radius: 6px;
-        }
-
-        .card-actions button:hover {
-          background: rgba(0,0,0,0.1);
-        }
-
-        .add-btn-wrapper {
-          display: flex;
-          justify-content: center;
-          margin-top: 32px;
-        }
-
-        .add-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background-color: #1976d2;
-          color: white;
-          border: none;
-          padding: 14px 24px;
-          border-radius: 10px;
-          font-weight: bold;
-          cursor: pointer;
-        }
-
-        .modal-backdrop {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.4);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        }
-
-        .modal {
-          background: var(--card-bg);
-          color: var(--text-color);
-          padding: 28px;
-          border-radius: 12px;
-          width: 450px;
-          max-width: 95%;
-          position: relative;
-        }
-
-        .close-btn {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-        }
-
-        .modal-form {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          margin-top: 16px;
-        }
-
-        .modal-form input,
-        .modal-form textarea {
-          padding: 12px;
-          border-radius: 8px;
-          border: 1px solid var(--border-color);
-          background-color: var(--input-bg);
-          color: var(--text-color);
-        }
-
-        .submit-btn {
-          background-color: #1976d2;
-          color: white;
-          border: none;
-          padding: 12px 18px;
-          border-radius: 8px;
-          cursor: pointer;
-          font-weight: bold;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --card-bg: #1e1e1e;
-            --text-color: #f0f0f0;
-            --border-color: #333;
-            --input-bg: #2a2a2a;
-          }
-        }
-
-        @media (prefers-color-scheme: light) {
-          :root {
-            --card-bg: #fff;
-            --text-color: #000;
-            --border-color: #ccc;
-            --input-bg: #f9f9f9;
-          }
-        }
-      `}</style>
     </div>
   );
 }

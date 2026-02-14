@@ -1,5 +1,5 @@
-// src/router/index.tsx
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Clients from "../pages/Clients";
@@ -15,11 +15,13 @@ export default function Router() {
         <Route path="/auth/login" element={<Login />} />
         <Route
           path="/"
-          element={isAuth() ? <Dashboard /> : <Navigate to="/auth/login" />}
-        />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/orders/all/:client_id" element={<Orders />} />
-        <Route path="/orders/get/:order_id" element={<OrderPage />} />
+          element={isAuth() ? <AppLayout /> : <Navigate to="/auth/login" />}
+        >
+          <Route index element={<Dashboard />} />
+          <Route path="clients" element={<Clients />} />
+          <Route path="orders/all/:client_id" element={<Orders />} />
+          <Route path="orders/get/:order_id" element={<OrderPage />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

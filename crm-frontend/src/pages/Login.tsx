@@ -1,4 +1,3 @@
-// src/pages/Login.tsx
 import { useState } from "react";
 import { login } from "../api/auth";
 
@@ -33,124 +32,63 @@ export default function Login() {
   };
 
   return (
-  <div className="form-container">
-    <form onSubmit={onSubmit} className="login-form">
-      <h2 className="form-title">Вход</h2>
-
-      <input
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="form-input"
-        type="email"
-      />
-
-      <input
-        placeholder="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="form-input"
-      />
-
-      {error && <div className="form-error">{error}</div>}
-      <button type="submit" className="form-button" disabled={loading}>
-        {loading ? "Вход..." : "Войти"}
-      </button>
-      </form>
-      <style>{`
-        .form-container {
-          display: flex;
-          justify-content: center;
-          margin-top: 40px;
-        }
-
-        .login-form {
-          background: var(--bg);
-          padding: 30px 40px;
-          border-radius: 12px;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-          width: 100%;
-          max-width: 360px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          font-family: Arial, sans-serif;
-        }
-
-        .form-title {
-          text-align: center;
-          color: #4f46e5;
-          font-size: 22px;
-          margin-bottom: 20px;
-          font-weight: 600;
-        }
-
-        .form-input {
-          padding: 10px 14px;
-          border-radius: 8px;
-          border: 2px solid var(--border);
-          font-size: 16px;
-          outline: none;
-          transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-input:focus {
-          border-color: #4f46e5;
-          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-
-        .form-button {
-          background-color: #4f46e5;
-          color: white;
-          padding: 10px 0;
-          border: none;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background-color 0.2s, transform 0.1s;
-        }
-
-        .form-button:hover {
-          background-color: #3730a3;
-          transform: translateY(-1px);
-        }
-
-        .form-button:active {
-          transform: translateY(0);
-        }
-
-        .form-button:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-
-        .form-error {
-          color: #dc2626;
-          font-size: 14px;
-          text-align: center;
-          margin-top: -8px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --bg: #1e1e1e;
-            --border: #333;
-            --text: #fff;
-            --input: #2a2a2a;
-          }
-        }
-
-        @media (prefers-color-scheme: light) {
-          :root {
-            --bg: #fff;
-            --border: #ccc;
-            --text: #000;
-            --input: #f9f9f9;
-          }
-        }
-      `}</style>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+            Freelance CRM
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
+            Войдите в аккаунт
+          </p>
+        </div>
+        <form
+          onSubmit={onSubmit}
+          className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8"
+        >
+          <div className="space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+                required
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                Пароль
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
+                {error}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold shadow-lg shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 transition-colors"
+            >
+              {loading ? "Вход..." : "Войти"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
