@@ -6,6 +6,7 @@ from typing import List
 from app.models.orders_table import Order
 from app.models.user_table import User
 from app.security.jwt import get_current_user_release
+from app.cache import get_cached, set_cached, invalidate_cached
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -15,12 +16,12 @@ async def add_order(data: OrderInputData, current_user: User = Depends(get_curre
     new_order = Order(user_id=current_user.id, client_id=data.client_id,
                       title=data.title, description=data.description,
                       price=data.price, status=data.status, notes=data.notes, is_paid=data.is_paid)
-    
     async with AsyncSessionLocal() as session:
         session.add(new_order)
         await session.commit()
         await session.refresh(new_order)
-        return new_order
+    await invalidate_cached(f"orders_all:{current_user.id}:")
+    return new_order
 
 
 @router.get("/get/{order_id}", response_model=OrderOutputData)
@@ -40,11 +41,18 @@ async def get_order(order_id: int, current_user: User = Depends(get_current_user
 
 @router.get("/all/{client_id}", response_model=List[OrderOutputData])
 async def get_all_orders_by_client(client_id: int, current_user: User = Depends(get_current_user_release)):
+    cache_key = f"orders_all:{current_user.id}:{client_id}"
+    cached = await get_cached(cache_key)
+    if cached is not None:
+        return [OrderOutputData(**d) for d in cached]
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(Order).where(Order.user_id == current_user.id, Order.client_id == client_id)
         )
         orders = result.scalars().all()
+        out = [OrderOutputData.model_validate(o).model_dump() for o in orders]
+        await set_cached(cache_key, out)
+        return orders
 
 
 @router.put("/update/{order_id}", response_model=OrderOutputData)
@@ -70,8 +78,8 @@ async def update_order(order_id: int, data: OrderInputData, current_user: User =
 
         await session.commit()
         await session.refresh(order)
-
-        return order
+    await invalidate_cached(f"orders_all:{current_user.id}:")
+    return order
 
 
 @router.delete("/delete/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -90,3 +98,4 @@ async def delete_order(order_id: int, current_user: User = Depends(get_current_u
 
         await session.delete(order)
         await session.commit()
+    await invalidate_cached(f"orders_all:{current_user.id}:")

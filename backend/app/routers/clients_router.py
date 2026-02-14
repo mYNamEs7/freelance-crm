@@ -7,6 +7,7 @@ from typing import List
 from app.models.user_table import User
 from app.security.jwt import get_current_user_release
 from app.database import AsyncSessionLocal
+from app.cache import get_cached, set_cached, invalidate_cached
 
 router = APIRouter(prefix="/clients", tags=["Clients"])
 
@@ -15,12 +16,12 @@ router = APIRouter(prefix="/clients", tags=["Clients"])
 async def add_client(data: ClientInputData, current_user: User = Depends(get_current_user_release)):
     new_client = Client(user_id=current_user.id, name=data.name,
                         contact=data.contact, notes=data.notes)
-    
     async with AsyncSessionLocal() as session:
         session.add(new_client)
         await session.commit()
         await session.refresh(new_client)
-        return new_client
+    await invalidate_cached(f"clients_all:{current_user.id}")
+    return new_client
 
 
 @router.get("/get/{client_id}", response_model=ClientOutputData)
@@ -40,12 +41,18 @@ async def get_client(client_id: int, current_user: User = Depends(get_current_us
 
 @router.get("/all", response_model=List[ClientOutputData])
 async def get_all_clients(current_user: User = Depends(get_current_user_release)):
+    cache_key = f"clients_all:{current_user.id}"
+    cached = await get_cached(cache_key)
+    if cached is not None:
+        return [ClientOutputData(**d) for d in cached]
     async with AsyncSessionLocal() as session:
         result = await session.execute(
             select(Client).where(Client.user_id == current_user.id)
         )
         clients = result.scalars().all()
-        return clients
+        out = [ClientOutputData.model_validate(c).model_dump() for c in clients]
+        await set_cached(cache_key, out)
+        return [ClientOutputData.model_validate(c) for c in clients]
 
 
 @router.put("/update/{client_id}", response_model=ClientOutputData)
@@ -66,8 +73,8 @@ async def get_client(client_id: int, data: ClientInputData, current_user: User =
 
         await session.commit()
         await session.refresh(client)
-
-        return client
+    await invalidate_cached(f"clients_all:{current_user.id}")
+    return client
 
 
 @router.delete("/delete/{client_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -91,5 +98,6 @@ async def get_client(client_id: int, current_user: User = Depends(get_current_us
             for order in orders:
                 await session.delete(order)
 
-        await session.delete(client)
+        await session.delete(client[0])
         await session.commit()
+    await invalidate_cached(f"clients_all:{current_user.id}")

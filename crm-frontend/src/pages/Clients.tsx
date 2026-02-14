@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { addClient } from "../api/clients";
 import { api } from "../api/http";
 import { setClientId } from "../api/orders";
@@ -18,13 +19,20 @@ export default function Clients() {
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [notes, setNotes] = useState("");
-  const [clients, setClients] = useState<Client[]>([]);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editClient, setEditClient] = useState<Client | null>(null);
 
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   setClientId(-1);
+
+  const {
+    data: clients = [],
+    isLoading: loading,
+  } = useQuery({
+    queryKey: ["clients"],
+    queryFn: () => api.get<Client[]>("/clients/all").then((res) => res.data),
+  });
 
   function UpdateFields() {
     setName("");
@@ -32,18 +40,10 @@ export default function Clients() {
     setNotes("");
   }
 
-  function GetClients() {
-    setLoading(true);
-    api.get("/clients/all").then((res) => {
-      setClients(res.data);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }
-
   async function OnAddClient(e: React.FormEvent) {
     e.preventDefault();
     await addClient(name, contact, notes);
-    GetClients();
+    queryClient.invalidateQueries({ queryKey: ["clients"] });
     UpdateFields();
     setIsModalOpen(false);
   }
@@ -56,7 +56,7 @@ export default function Clients() {
       contact,
       notes,
     });
-    GetClients();
+    queryClient.invalidateQueries({ queryKey: ["clients"] });
     UpdateFields();
     setEditClient(null);
     setIsModalOpen(false);
@@ -65,7 +65,7 @@ export default function Clients() {
   async function OnDeleteClient(clientId: number) {
     if (!confirm("Удалить клиента?")) return;
     await api.delete(`/clients/delete/${clientId}`);
-    GetClients();
+    queryClient.invalidateQueries({ queryKey: ["clients"] });
   }
 
   function OpenClient(clientId: number) {
@@ -86,10 +86,6 @@ export default function Clients() {
     setNotes(client.notes);
     setIsModalOpen(true);
   }
-
-  useEffect(() => {
-    GetClients();
-  }, []);
 
   if (loading && clients.length === 0) {
     return <Loader />;
