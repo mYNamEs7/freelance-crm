@@ -1,14 +1,12 @@
 // src/pages/Login.tsx
 import { useState } from "react";
 import { login } from "../api/auth";
-import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +14,7 @@ export default function Login() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate("/");
+      window.location.href = "/";
     } catch (err: unknown) {
       let msg = "Неверный email или пароль";
       if (err && typeof err === "object" && "response" in err) {
