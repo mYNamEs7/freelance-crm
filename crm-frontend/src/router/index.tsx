@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "../components/AppLayout";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Clients from "../pages/Clients";
 import Orders from "../pages/Orders";
@@ -13,6 +14,7 @@ export default function Router() {
     <BrowserRouter>
       <Routes>
         <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
         <Route
           path="/"
           element={isAuth() ? <AppLayout /> : <Navigate to="/auth/login" />}

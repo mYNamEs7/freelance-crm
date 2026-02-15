@@ -9,3 +9,12 @@ export const login = async (email: string, password: string) => {
   localStorage.setItem("access_token", res.data.access_token);
   return res.data;
 };
+
+export const register = async (username: string, email: string, password: string) => {
+  const res = await api.post("/user/register", {
+    username,
+    email,
+    password,
+  });
+  return res.data;
+};

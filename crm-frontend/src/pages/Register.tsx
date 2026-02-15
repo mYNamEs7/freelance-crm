@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { login } from "../api/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { register as registerUser } from "../api/auth";
 
-export default function Login() {
-  const location = useLocation();
-  const justRegistered = (location.state as { registered?: boolean } | null)?.registered;
+export default function Register() {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,13 +15,18 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
-      window.location.href = "/";
+      await registerUser(username, email, password);
+      navigate("/auth/login", { state: { registered: true } });
     } catch (err: unknown) {
-      let msg = "Неверный email или пароль";
+      let msg = "Не удалось зарегистрироваться";
       if (err && typeof err === "object" && "response" in err) {
-        const res = (err as { response?: { data?: { detail?: string }; status?: number } }).response;
-        msg = res?.data?.detail || (res?.status === 401 ? "Неверный email или пароль" : msg);
+        const res = (err as { response?: { data?: { detail?: string | string[] }; status?: number } }).response;
+        const detail = res?.data?.detail;
+        if (typeof detail === "string") {
+          msg = detail;
+        } else if (Array.isArray(detail) && detail.length > 0) {
+          msg = detail.map((d: { msg?: string }) => d.msg || "").join(". ") || msg;
+        }
       } else if (err && typeof err === "object" && "message" in err) {
         const m = (err as { message?: string }).message;
         if (m?.includes("Network") || m?.includes("CORS")) {
@@ -42,19 +47,28 @@ export default function Login() {
             Freelance CRM
           </h1>
           <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
-            Войдите в аккаунт
+            Создайте аккаунт
           </p>
-          {justRegistered && (
-            <p className="text-sm text-green-600 dark:text-green-400 mt-2 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg inline-block">
-              Вы успешно зарегистрировались. Войдите в аккаунт.
-            </p>
-          )}
         </div>
         <form
           onSubmit={onSubmit}
           className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8"
         >
           <div className="space-y-5">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                Имя пользователя
+              </label>
+              <input
+                id="username"
+                type="text"
+                placeholder="ivan"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+                required
+              />
+            </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Email
@@ -80,6 +94,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-shadow"
+                required
               />
             </div>
             {error && (
@@ -92,15 +107,15 @@ export default function Login() {
               disabled={loading}
               className="w-full py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold shadow-lg shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 transition-colors"
             >
-              {loading ? "Вход..." : "Войти"}
+              {loading ? "Регистрация..." : "Зарегистрироваться"}
             </button>
             <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-4">
-              Нет аккаунта?{" "}
+              Уже есть аккаунт?{" "}
               <Link
-                to="/auth/register"
+                to="/auth/login"
                 className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 focus:outline-none focus:underline"
               >
-                Зарегистрируйтесь
+                Войдите
               </Link>
             </p>
           </div>
