@@ -33,20 +33,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">
           Добро пожаловать{user.username ? `, ${user.username}` : ""}
         </h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-1">
+        <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm sm:text-base">
           {user.email}
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
         <button
           onClick={() => navigate("/clients")}
-          className="group flex items-center gap-4 p-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all text-left"
+          className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all text-left"
         >
           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/60 transition-colors">
             <Users size={24} />

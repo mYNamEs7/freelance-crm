@@ -32,8 +32,9 @@ export default function OrderPage() {
 
   if (!order_id) {
     return (
-      <div className="p-8">
-        <p>Order not found</p>
+      <div className="p-4 sm:p-6 lg:p-8">
+        <BackButton />
+        <p className="text-slate-500 dark:text-slate-400">Заказ не найден</p>
       </div>
     );
   }
@@ -61,7 +62,7 @@ export default function OrderPage() {
 
   if (!order) {
     return (
-      <div className="p-8 max-w-2xl mx-auto">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
         <BackButton />
         <p className="text-slate-500 dark:text-slate-400">Заказ не найден</p>
       </div>
@@ -77,10 +78,9 @@ export default function OrderPage() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto flex flex-col items-center">
-      <div className="w-full max-w-md">
-        <BackButton />
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg overflow-hidden">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
+      <BackButton />
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-lg overflow-hidden">
           <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-600">
             <h1 className="text-xl font-bold text-indigo-600 dark:text-indigo-400 text-center">
               Заказ
@@ -110,7 +110,6 @@ export default function OrderPage() {
             </p>
           </div>
         </div>
-      </div>
     </div>
   );
 }

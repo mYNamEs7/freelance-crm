@@ -96,17 +96,17 @@ export default function Clients() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <BackButton />
-      <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">
         Клиенты
       </h2>
 
-      <div className="flex flex-wrap gap-6 justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {clients.map((client) => (
           <div
             key={client.id}
-            className="w-72 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
+            className="w-full max-w-sm mx-auto sm:max-w-none sm:mx-0 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
           >
             <button
               type="button"
@@ -145,11 +145,11 @@ export default function Clients() {
         ))}
       </div>
 
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center sm:justify-start mt-6 sm:mt-8">
         <button
           type="button"
           onClick={OpenAddModal}
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors"
+          className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors text-sm sm:text-base"
         >
           <Plus size={20} />
           Добавить клиента
@@ -158,11 +158,11 @@ export default function Clients() {
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md relative p-6"
+            className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-h-[90vh] overflow-y-auto sm:max-w-md relative p-4 sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <button

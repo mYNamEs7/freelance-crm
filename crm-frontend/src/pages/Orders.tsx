@@ -35,7 +35,7 @@ export default function Orders() {
   const { client_id } = useParams<{ client_id: string }>();
   const navigate = useNavigate();
 
-  if (!client_id) return <div className="p-8">Client not found</div>;
+  if (!client_id) return <div className="p-4 sm:p-6 lg:p-8 text-slate-500 dark:text-slate-400">Клиент не найден</div>;
 
   const [client, setClient] = useState<Client | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -115,14 +115,14 @@ export default function Orders() {
   }
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
       <BackButton />
-      <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4 sm:mb-6">
         Заказы
       </h2>
 
       {client && (
-        <div className="mb-8 p-5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-center">
+        <div className="mb-6 sm:mb-8 p-4 sm:p-5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-center">
           <p className="font-semibold text-slate-800 dark:text-slate-100">
             {client.name}
           </p>
@@ -153,11 +153,11 @@ export default function Orders() {
         </div>
       ) : (
         <>
-          <div className="flex flex-wrap gap-6 justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="w-72 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
+                className="w-full max-w-sm mx-auto sm:max-w-none sm:mx-0 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col"
               >
                 <button
                   type="button"
@@ -207,11 +207,11 @@ export default function Orders() {
               </div>
             ))}
           </div>
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center sm:justify-start mt-6 sm:mt-8">
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+              className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm sm:text-base"
             >
               <Plus size={20} />
               Добавить заказ
@@ -222,14 +222,14 @@ export default function Orders() {
 
       {(isModalOpen || editOrder) && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
           onClick={() => {
             setIsModalOpen(false);
             setEditOrder(null);
           }}
         >
           <div
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md relative p-6"
+            className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-h-[90vh] overflow-y-auto sm:max-w-md relative p-4 sm:p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <button
