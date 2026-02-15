@@ -20,12 +20,12 @@ export default function Register() {
     } catch (err: unknown) {
       let msg = "Не удалось зарегистрироваться";
       if (err && typeof err === "object" && "response" in err) {
-        const res = (err as { response?: { data?: { detail?: string | string[] }; status?: number } }).response;
+        const res = (err as { response?: { data?: { detail?: string | Array<{ msg?: string }> }; status?: number } }).response;
         const detail = res?.data?.detail;
         if (typeof detail === "string") {
           msg = detail;
         } else if (Array.isArray(detail) && detail.length > 0) {
-          msg = detail.map((d: { msg?: string }) => d.msg || "").join(". ") || msg;
+          msg = detail.map((d) => d.msg || "").join(". ") || msg;
         }
       } else if (err && typeof err === "object" && "message" in err) {
         const m = (err as { message?: string }).message;
